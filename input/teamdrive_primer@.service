@@ -1,29 +1,24 @@
-#########################################################################
-# Title:         Cloudbox: Rclone VFS Primer - Service                  #
-# Location:      /etc/systemd/system/rclone_vfs_primer.service          #
-# Author(s):     EnorMOZ                                                #
-# URL:           https://github.com/cloudbox/cloudbox                   #
-# --                                                                    #
-#         Part of the Cloudbox project: https://cloudbox.works          #
-#########################################################################
-#                   GNU General Public License v3.0                     #
-#########################################################################
+#####################################################
+# Title:         Rclone VFS Primer - Service        #
+# Author(s):     EnorMOZ                            #
+#                                                   #
+#####################################################
+#                GNU General Public License v3.0    #
+#####################################################
 
 [Unit]
 Description=sharedrive %i primer - service
 Requires=teamdrive@%i.service
 After=teamdrive@%i.service
 
-
-
 [Service]
-EnvironmentFile=/opt/sharedrives/%i.conf
+EnvironmentFile=/home/$user/.smount/sharedrives/%i.conf
 User=$user
 Group=$group
 Type=oneshot
 ExecStartPre=/bin/sleep 10
-ExecStart=/usr/bin/rclone \
-  --config /home/$user/.config/rclone/rclone.conf \
+ExecStart=/opt/crop/rclone_gclone \
+  --config=/home/$user/.smount/smount.conf \
   --timeout=1h \
   -vvv \
   --rc-addr=localhost:${RCLONE_RC_PORT} \

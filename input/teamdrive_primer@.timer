@@ -1,13 +1,10 @@
-#########################################################################
-# Title:         Cloudbox: Rclone VFS Primer - Timer                    #
-# Location:      /etc/systemd/system/rclone_vfs_primer.timer            #
-# Author(s):     desimaniac, Horjulf                                    #
-# URL:           https://github.com/cloudbox/cloudbox                   #
-# --                                                                    #
-#         Part of the Cloudbox project: https://cloudbox.works          #
-#########################################################################
-#                   GNU General Public License v3.0                     #
-#########################################################################
+###############################################################
+# Title:         Rclone VFS Primer - Timer                    #
+# Author(s):     desimaniac, Horjulf                          #
+#                                                             #
+###############################################################
+#                GNU General Public License v3.0              #
+###############################################################
 
 [Unit]
 Description=sharedrive Primer - Timer

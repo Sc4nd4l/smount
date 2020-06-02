@@ -1,26 +1,27 @@
 #!/bin/bash
-echo -e "Starting mountup.sh"
+echo -e "AIO mount"
 
 # REQUIRED VARIABLES
-USER=max # user name goes here
-GROUP=max # group name goes here
-SET_DIR=~/smount/sets # set file dir
-MOUNT_DIR=/mnt/sharedrives # where you want your sharedrives mounted
+USER=max # user name
+GROUP=max # group name
+SET_DIR=~/.smount/sets # set file dir
+MOUNT_DIR=/mnt/sharedrives # sharedrive mount
+MSTYLE=aio # OPTIONS: aio,strm,csd
 
 # OPTIONAL MergerFS Variables 
 # for sample mergerfs service file. 
 # NOT INSTALLED. PLACED in OUTPUT DIR as example only see options below to enable inline
 RW_LOCAL=/mnt/local # read write local dir for merger service
-UMOUNT_DIR=/mnt/sharedrives/td_* # if common prefix used like `td_aerobics_vids', 'td_jazz', then wildcard is possible (td_*)
-MERGER_DIR=/mnt/unionfs # if this is a non empty dir or already in use by another merger service a reboot is recommended.
+UMOUNT_DIR=/mnt/sharedrives/td_* # if common prefix wildcard is possible (td_*)
+MERGER_DIR=/mnt/unionfs # if this is a non empty dir or already in use by another merger service a reboot is required.
 
 # Make Work Dirs
-sudo mkdir -p /opt/sharedrives
-sudo chown -R $USER:$GROUP /opt/sharedrives
-sudo chmod -R 775 /opt/sharedrives
+sudo mkdir -p /home/$user/.smount/sharedrives
+sudo chown -R $USER:$GROUP /home/$user/.smount/sharedrives
+sudo chmod -R 775 /home/$user/.smount/sharedrives
 
 # Create and place service files
-export user=$USER group=$GROUP rw_local=$RW_LOCAL umount_dir=$UMOUNT_DIR merger_dir=$MERGER_DIR 
+export user=$USER group=$GROUP rw_local=$RW_LOCAL umount_dir=$UMOUNT_DIR merger_dir=$MERGER_DIR mstyle=$MSTYLE
 envsubst '$user,$group' <./input/teamdrive@.service >./output/teamdrive@.service
 envsubst '$user,$group' <./input/teamdrive_primer@.service >./output/teamdrive_primer@.service
 envsubst '$user,$group' <./input/teamdrive_primer@.timer >./output/teamdrive_primer@.timer
@@ -67,29 +68,29 @@ make_config () {
 make_starter () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl enable teamdrive@$name.service && sudo systemctl enable teamdrive_primer@$name.service">>vfs_starter.sh
+      echo "sudo systemctl enable teamdrive@$name.service && sudo systemctl enable teamdrive_primer@$name.service">>$MSTYLE.starter.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl start teamdrive@$name.service">>vfs_starter.sh
+      echo "sudo systemctl start teamdrive@$name.service">>$MSTYLE.starter.sh
     done
 }
 
 make_primer () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl start teamdrive_primer@$name.service">>vfs_primer.sh
+      echo "sudo systemctl start teamdrive_primer@$name.service">>$MSTYLE.primer.sh
     done
 }
 
 make_vfskill () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl stop teamdrive@$name.service && sudo systemctl stop teamdrive_primer@$name.service">>vfs_kill.sh
+      echo "sudo systemctl stop teamdrive@$name.service && sudo systemctl stop teamdrive_primer@$name.service">>$MSTYLE.kill.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl disable teamdrive@$name.service && sudo systemctl disable teamdrive_primer@$name.service">>vfs_kill.sh
+      echo "sudo systemctl disable teamdrive@$name.service && sudo systemctl disable teamdrive_primer@$name.service">>$MSTYLE.kill.sh
     done
 }
 
@@ -99,9 +100,9 @@ make_primer $1
 # daemon reload
 sudo systemctl daemon-reload
 make_vfskill $1
-chmod +x vfs_starter.sh vfs_primer.sh vfs_kill.sh
-./vfs_starter.sh  #fire the starter
-nohup sh ./vfs_primer.sh &>/dev/null &
+chmod +x $MSTYLE.starter.sh $MSTYLE.primer.sh $MSTYLE.kill.sh
+./$MSTYLE.starter.sh  #fire the starter
+nohup sh ./$MSTYLE.primer.sh &>/dev/null &
 
 # Uncomment below line if using cloudbox merger service already and enabling extra merger
 #sudo systemctl stop mergerfs.service
@@ -109,5 +110,5 @@ nohup sh ./vfs_primer.sh &>/dev/null &
 # uncomment below start smerger.service
 #systemctl start mergerfs.service && sudo systemctl start smerger.service
 
-echo "sharedrive vfs mount script complete, it may take time for files to fully populate"
+echo "$MSTYLE mount script completed."
 #eof
