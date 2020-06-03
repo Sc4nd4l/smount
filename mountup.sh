@@ -1,5 +1,4 @@
 #!/bin/bash
-echo -e "AIO mount"
 
 # REQUIRED VARIABLES
 USER=max # user name
@@ -8,8 +7,10 @@ SET_DIR=~/.smount/sets # set file dir
 MOUNT_DIR=/mnt/sharedrives # sharedrive mount
 MSTYLE=aio # OPTIONS: aio,strm,csd
 
+echo -e "MSTYLE mount building..."
+
 # OPTIONAL MergerFS Variables 
-# for sample mergerfs service file. 
+# for example mergerfs service file. 
 # NOT INSTALLED. PLACED in OUTPUT DIR as example only see options below to enable inline
 RW_LOCAL=/mnt/local # read write local dir for merger service
 UMOUNT_DIR=/mnt/sharedrives/td_* # if common prefix wildcard is possible (td_*)
@@ -22,13 +23,13 @@ sudo chmod -R 775 /home/$user/.smount/sharedrives
 
 # Create and place service files
 export user=$USER group=$GROUP rw_local=$RW_LOCAL umount_dir=$UMOUNT_DIR merger_dir=$MERGER_DIR mstyle=$MSTYLE
-envsubst '$user,$group' <./input/teamdrive@.service >./output/teamdrive@.service
-envsubst '$user,$group' <./input/teamdrive_primer@.service >./output/teamdrive_primer@.service
-envsubst '$user,$group' <./input/teamdrive_primer@.timer >./output/teamdrive_primer@.timer
-envsubst '$rw_local,$umount_dir,$merger_dir' <./input/smerger.service >./output/smerger.service
+envsubst '$user,$group' <./input/aio@.service >./output/$MSTYLE.@.service
+envsubst '$user,$group' <./input/primer@.service >./output/$MSTYLE.primer@.service
+envsubst '$user,$group,$mstyle' <./input/primer@.timer >./output/$MSTYLE.primer@.timer
+envsubst '$rw_local,$umount_dir,$merger_dir' <./input/smerger.service >./output/$MSTYLE.merger.service
 sudo bash -c 'cp ./output/teamdrive@.service /etc/systemd/system/teamdrive@.service'
-sudo bash -c 'cp ./output/teamdrive_primer@.service /etc/systemd/system/teamdrive_primer@.service'
-sudo bash -c 'cp ./output/teamdrive_primer@.timer /etc/systemd/system/teamdrive_primer@.timer'
+sudo bash -c 'cp ./output/aio_primer@.service /etc/systemd/system/$MSTYLE.primer@.service'
+sudo bash -c 'cp ./output/teamdrive_primer@.timer /etc/systemd/system/$MSTYLE.primer@.timer'
 
 # uncomment next two lines to copy smerger to /etc/systemd/system and enable
 #sudo bash -c 'cp ./output/smerger.service /etc/systemd/system/smerger.service'
@@ -40,9 +41,9 @@ sudo systemctl enable teamdrive_primer@.service
 sudo systemctl enable teamdrive_primer@.timer
 
 # rename existing starter and kill scripts if present
-mv vfs_starter.sh vfs_starter_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
-mv vfs_primer.sh vfs_primer_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
-mv vfs_kill.sh vfs_kill_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
+#mv vfs_starter.sh vfs_starter_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
+#mv vfs_primer.sh vfs_primer_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
+#mv vfs_kill.sh vfs_kill_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
 
 # Note that port default starting number=5575
 # Read the current port no to be used then increment by +1
@@ -68,29 +69,29 @@ make_config () {
 make_starter () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl enable teamdrive@$name.service && sudo systemctl enable teamdrive_primer@$name.service">>$MSTYLE.starter.sh
+      echo "sudo systemctl enable $MSTYLE.@$name.service && sudo systemctl enable $MSTYLE.primer@$name.service">>$MSTYLE.starter.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl start teamdrive@$name.service">>$MSTYLE.starter.sh
+      echo "sudo systemctl start $MSTYLE.@$name.service">>$MSTYLE.starter.sh
     done
 }
 
 make_primer () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl start teamdrive_primer@$name.service">>$MSTYLE.primer.sh
+      echo "sudo systemctl start $MSTYLE.primer@$name.service">>$MSTYLE.primer.sh
     done
 }
 
 make_vfskill () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl stop teamdrive@$name.service && sudo systemctl stop teamdrive_primer@$name.service">>$MSTYLE.kill.sh
+      echo "sudo systemctl stop $MSTYLE@$name.service && sudo systemctl stop $MSTYLE.primer@$name.service">>$MSTYLE.kill.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl disable teamdrive@$name.service && sudo systemctl disable teamdrive_primer@$name.service">>$MSTYLE.kill.sh
+      echo "sudo systemctl disable $MSTYLE@$name.service && sudo systemctl disable $MSTYLE.primer@$name.service">>$MSTYLE.kill.sh
     done
 }
 
