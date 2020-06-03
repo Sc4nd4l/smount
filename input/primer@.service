@@ -8,7 +8,7 @@
 
 [Unit]
 Description=sharedrive %i primer - service
-Requires=teamdrive@%i.service
+Requires=$mstyle@%i.service
 After=teamdrive@%i.service
 
 [Service]
