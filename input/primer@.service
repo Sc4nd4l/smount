@@ -12,13 +12,13 @@ Requires=$mstyle@%i.service
 After=teamdrive@%i.service
 
 [Service]
-EnvironmentFile=/home/$user/.smount/sharedrives/%i.conf
+EnvironmentFile=/home/$user/smount/sharedrives/%i.conf
 User=$user
 Group=$group
 Type=oneshot
 ExecStartPre=/bin/sleep 10
 ExecStart=/opt/crop/rclone_gclone \
-  --config=/home/$user/.smount/smount.conf \
+  --config=/home/$user/smount/smount.conf \
   --timeout=1h \
   -vvv \
   --rc-addr=localhost:${RCLONE_RC_PORT} \

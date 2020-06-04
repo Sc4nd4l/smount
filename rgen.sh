@@ -1,5 +1,5 @@
 #!/bin/bash
-SET_DIR=~/.smount/sets
+SET_DIR=~/smount/sets
 sadir="/opt/mountsa"
 token={"access_token":"ya"}
 
@@ -19,7 +19,7 @@ scope = drive
 server_side_across_configs = true
 team_drive = $driveid
 service_account_file = "$sadir/$count.json"
-">>~/.smount/smount.conf
+">>~/smount/smount.conf
   done; }
 
 make_shmount.conf $1

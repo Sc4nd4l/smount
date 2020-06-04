@@ -3,7 +3,7 @@
 # REQUIRED VARIABLES
 USER=max # user name
 GROUP=max # group name
-SET_DIR=~/.smount/sets # set file dir
+SET_DIR=~/smount/sets # set file dir
 SA_PATH=/opt/mountsa # sharedrive mounting service accounts
 MOUNT_DIR=/mnt/sharedrives # sharedrive mount
 MSTYLE=aio # OPTIONS: aio,strm,csd  All-In-One Streamer Cloudseed
@@ -18,9 +18,9 @@ UMOUNT_DIR=/mnt/sharedrives/td_* # if common prefix wildcard is possible (td_*)
 MERGER_DIR=/mnt/unionfs # if this is a non empty dir or already in use by another merger service a reboot is required.
 
 # Make Work Dirs
-sudo mkdir -p /home/$user/.smount/sharedrives
-sudo chown -R $USER:$GROUP /home/$user/.smount/sharedrives
-sudo chmod -R 775 /home/$user/.smount/sharedrives
+sudo mkdir -p /home/$user/smount/sharedrives
+sudo chown -R $USER:$GROUP /home/$user/smount/sharedrives
+sudo chmod -R 775 /home/$user/smount/sharedrives
 
 # Create and place service files
 export user=$USER group=$GROUP rw_local=$RW_LOCAL umount_dir=$UMOUNT_DIR merger_dir=$MERGER_DIR mstyle=$MSTYLE sa_path=$SA_PATH
@@ -83,7 +83,7 @@ scope = drive
 server_side_across_configs = true
 team_drive = $driveid
 service_account_file = "$SA_PATH/$count.json"
-">>~/.smount/smount.conf
+">>~/smount/smount.conf
   done; }
 #
 make_starter () {
