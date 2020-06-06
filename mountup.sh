@@ -28,9 +28,9 @@ envsubst '$user,$group,$sa_path' <./input/$MSTYLE@.service >./output/$MSTYLE@.se
 envsubst '$user,$group' <./input/primer@.service >./output/$MSTYLE.primer@.service
 envsubst '$user,$group,$mstyle' <./input/primer@.timer >./output/$MSTYLE.primer@.timer
 envsubst '$rw_local,$umount_dir,$merger_dir' <./input/smerger.service >./output/$MSTYLE.merger.service
-sudo bash -c 'cp ./output/$MSTYLE@.service /etc/systemd/system/$MSTYLE@.service'
-sudo bash -c 'cp ./output/$MSTYLE.primer@.service /etc/systemd/system/$MSTYLE.primer@.service'
-sudo bash -c 'cp ./output/$MSTYLE.primer@.timer /etc/systemd/system/$MSTYLE.primer@.timer'
+sudo bash -c 'cp ./output/"$MSTYLE"@.service /etc/systemd/system/"$MSTYLE"@.service'
+sudo bash -c 'cp ./output/"$MSTYLE".primer@.service /etc/systemd/system/"$MSTYLE".primer@.service'
+sudo bash -c 'cp ./output/"$MSTYLE".primer@.timer /etc/systemd/system/"$MSTYLE".primer@.timer'
 
 # uncomment next two lines to copy smerger to /etc/systemd/system and enable
 #sudo bash -c 'cp ./output/smerger.service /etc/systemd/system/smerger.service'
