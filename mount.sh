@@ -13,7 +13,18 @@ RW_LOCAL=/mnt/local # read write dir for merger
 UMOUNT_DIR='/mnt/sharedrives/td_*' # if common prefix wildcard is possible (td_*) refer drive names in set file
 MERGER_DIR=/mnt/unionfs # if this is a non empty dir or already in use by another merger service a reboot is required.
 
-## functions
+# count fuctions
+get_port_no_count () {
+  read count < port_no.count
+  echo $(($count+1)) > port_no.count
+}
+
+get_sa_count () {
+  read sacount < sa.count
+  echo $(($sacount+1)) > sa.count
+}
+
+## mount functions
 aio () {
   export user=$USER group=$GROUP rw_local=$RW_LOCAL umount_dir=$UMOUNT_DIR merger_dir=$MERGER_DIR mstyle=$MSTYLE sa_path=$SA_PATH binary=$BINARY
   envsubst '$user,$group,$sa_path,$binary' <./input/aio@.service >./output/aio@.service
@@ -103,7 +114,7 @@ type = drive
 scope = drive
 server_side_across_configs = true
 team_drive = $driveid
-service_account_file = "$SA_PATH/$count.json"
+service_account_file = "$SA_PATH/$sacount.json"
 ">>~/smount/smount.conf
   done; }
 
@@ -136,21 +147,12 @@ make_vfskill () {
     done
 }
 
-get_port_no_count () {
-  read count < port_no.count
-  echo $(($count+1)) > port_no.count
-}
 
-# Read the current SA no to be used then increment by +1
-get_sa_count () {
-  read count < sa.count
-  echo $(($count+1)) > sa.count
-}
 
 # Make Config Dirs
-sudo mkdir -p /home/$USER/smount/sharedrives
-sudo chown -R $USER:$GROUP /home/$USER/smount/sharedrives
-sudo chmod -R 775 /home/$USER/smount/sharedrives
+sudo mkdir -p /home/$USER/smount/sharedrives /home/$USER/smount/backup /home/$USER/smount/scripts /home/$USER/smount/config
+sudo chown -R $USER:$GROUP /home/$USER/smount/sharedrives /home/$USER/smount/backup /home/$USER/smount/scripts /home/$USER/smount/config
+sudo chmod -R 775 /home/$USER/smount/sharedrives /home/$USER/smount/backup /home/$USER/smount/scripts /home/$USER/smount/config
 
 # rename existing starter and kill scripts if present
 mv $MSTYLE.starter.sh ./backup/$MSTYLE.starter`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
