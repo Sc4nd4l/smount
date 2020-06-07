@@ -10,7 +10,7 @@ MSTYLE=aio # OPTIONS: aio,strm,csd,cst All-In-One Streamer Cloudseed Custom
 BINARY=/opt/crop/rclone_gclone # rclone or gclone binary to use
 # MergerFS Variables
 RW_LOCAL=/mnt/local # read write dir for merger
-UMOUNT_DIR=/mnt/sharedrives/td_* # if common prefix wildcard is possible (td_*) refer drive names in set file
+UMOUNT_DIR='/mnt/sharedrives/td_*' # if common prefix wildcard is possible (td_*) refer drive names in set file
 MERGER_DIR=/mnt/unionfs # if this is a non empty dir or already in use by another merger service a reboot is required.
 
 ## functions
@@ -59,7 +59,8 @@ csd () {
   #
   sudo systemctl enable csd@.service
   sudo systemctl enable csd.primer@.service
-  sudo systemctl enable csd.primer@.timer}
+  sudo systemctl enable csd.primer@.timer
+}
 
 cst () {
   export user=$USER group=$GROUP rw_local=$RW_LOCAL umount_dir=$UMOUNT_DIR merger_dir=$MERGER_DIR mstyle=$MSTYLE sa_path=$SA_PATH binary=$BINARY
@@ -88,7 +89,7 @@ make_config () {
       SA_PATH=$SA_PATH
       BINARY=$BINARY
       ";
-      echo "$conf" > /opt/sharedrives/$name.conf
+      echo "$conf" > /home/$USER/smount/sharedrives/$name.conf
     done
 }
 
@@ -126,11 +127,11 @@ make_primer () {
 
 make_vfskill () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
-    while read -r name other;do
+    while read -r name;do
       echo "sudo systemctl stop $MSTYLE@$name.service && sudo systemctl stop $MSTYLE.primer@$name.service">>$MSTYLE.kill.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
-    while read -r name other;do
+    while read -r name;do
       echo "sudo systemctl disable $MSTYLE@$name.service && sudo systemctl disable $MSTYLE.primer@$name.service">>$MSTYLE.kill.sh
     done
 }
@@ -154,10 +155,12 @@ sudo chmod -R 775 /home/$USER/smount/sharedrives
 
 # Note that port default starting number=5575
 # Read the current port no to be used then increment by +1
+
 get_port_no_count () {
   read count < port_no.count
   echo $(($count+1)) > port_no.count
 }
+
 # Read the current SA no to be used then increment by +1
 get_sa_count () {
   read count < sa.count
@@ -185,7 +188,7 @@ chmod +x $MSTYLE.starter.sh $MSTYLE.primer.sh $MSTYLE.kill.sh
 #sudo systemctl stop mergerfs.service
 
 # uncomment below start smerger.service
-#systemctl start mergerfs.service && sudo systemctl start smerger.service
+# systemctl start mergerfs.service && sudo systemctl start smerger.service
 
 echo "$MSTYLE mount script completed."
 #eof
