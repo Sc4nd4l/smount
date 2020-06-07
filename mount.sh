@@ -136,26 +136,6 @@ make_vfskill () {
     done
 }
 
-# Make Config Dirs
-sudo mkdir -p /home/$USER/smount/sharedrives
-sudo chown -R $USER:$GROUP /home/$USER/smount/sharedrives
-sudo chmod -R 775 /home/$USER/smount/sharedrives
-
-
-
-# enable new services TEST LATER
-# sudo systemctl enable $MSTYLE@.service
-# sudo systemctl enable $MSTYLE.primer@.service
-# sudo systemctl enable $MSTYLE.primer@.timer
-
-# rename existing starter and kill scripts if present
-#mv vfs_starter.sh vfs_starter_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
-#mv vfs_primer.sh vfs_primer_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
-#mv vfs_kill.sh vfs_kill_`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
-
-# Note that port default starting number=5575
-# Read the current port no to be used then increment by +1
-
 get_port_no_count () {
   read count < port_no.count
   echo $(($count+1)) > port_no.count
@@ -167,6 +147,21 @@ get_sa_count () {
   echo $(($count+1)) > sa.count
 }
 
+# Make Config Dirs
+sudo mkdir -p /home/$USER/smount/sharedrives
+sudo chown -R $USER:$GROUP /home/$USER/smount/sharedrives
+sudo chmod -R 775 /home/$USER/smount/sharedrives
+
+# enable new services TEST LATER
+# sudo systemctl enable $MSTYLE@.service
+# sudo systemctl enable $MSTYLE.primer@.service
+# sudo systemctl enable $MSTYLE.primer@.timer
+
+# rename existing starter and kill scripts if present
+mv $MSTYLE.starter.sh "$MSTYLE.starter`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
+mv $MSTYLE.primer.sh "$MSTYLE.primer`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
+mv $MSTYLE.kill.sh "$MSTYLE.kill`date +%Y%m%d%H%M%S`.sh" > /dev/null 2>&1
+
 # Function calls
 $MSTYLE  $1
 make_shmount.conf $1
@@ -175,20 +170,11 @@ make_starter $1
 make_primer $1
 make_vfskill $1
 
-# daemon reload
+# daemon reload - fire in the hole
 sudo systemctl daemon-reload
 chmod +x $MSTYLE.starter.sh $MSTYLE.primer.sh $MSTYLE.kill.sh
-
-
-#NO STARTING YET
-#./$MSTYLE.starter.sh  #fire the starter
-# nohup sh ./$MSTYLE.primer.sh &>/dev/null &
-
-# Uncomment below line if using cloudbox merger service already and enabling extra merger
-#sudo systemctl stop mergerfs.service
-
-# uncomment below start smerger.service
-# systemctl start mergerfs.service && sudo systemctl start smerger.service
+./$MSTYLE.starter.sh  #fire the starter
+nohup sh ./$MSTYLE.primer.sh &>/dev/null &
 
 echo "$MSTYLE mount script completed."
 #eof
