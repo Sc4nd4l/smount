@@ -97,8 +97,7 @@ make_config () {
       RCLONE_RC_PORT=$count
       SOURCE_REMOTE=$name:
       DESTINATION_DIR=$MOUNT_DIR/$name/
-      SA_PATH=$SA_PATH
-      BINARY=$BINARY
+      SA_PATH=$SA_PATH/
       ";
       echo "$conf" > /home/$USER/smount/sharedrives/$name.conf
     done
@@ -115,6 +114,7 @@ scope = drive
 server_side_across_configs = true
 team_drive = $driveid
 service_account_file = "$SA_PATH/$sacount.json"
+drive-service-account-file-path= "$SA_PATH"
 ">>~/smount/smount.conf
   done; }
 
