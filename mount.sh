@@ -127,11 +127,11 @@ make_primer () {
 
 make_vfskill () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
-    while read -r name;do
+    while read -r name other;do
       echo "sudo systemctl stop $MSTYLE@$name.service && sudo systemctl stop $MSTYLE.primer@$name.service">>$MSTYLE.kill.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
-    while read -r name;do
+    while read -r name other;do
       echo "sudo systemctl disable $MSTYLE@$name.service && sudo systemctl disable $MSTYLE.primer@$name.service">>$MSTYLE.kill.sh
     done
 }
@@ -152,15 +152,17 @@ sudo mkdir -p /home/$USER/smount/sharedrives
 sudo chown -R $USER:$GROUP /home/$USER/smount/sharedrives
 sudo chmod -R 775 /home/$USER/smount/sharedrives
 
+# rename existing starter and kill scripts if present
+mv $MSTYLE.starter.sh ./backup/$MSTYLE.starter`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
+mv $MSTYLE.primer.sh ./backup/$MSTYLE.primer`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
+mv $MSTYLE.kill.sh ./backup/$MSTYLE.kill`date +%Y%m%d%H%M%S`.sh > /dev/null 2>&1
+
 # enable new services TEST LATER
 # sudo systemctl enable $MSTYLE@.service
 # sudo systemctl enable $MSTYLE.primer@.service
 # sudo systemctl enable $MSTYLE.primer@.timer
 
-# rename existing starter and kill scripts if present
-mv $MSTYLE.starter.sh ./backup/"$MSTYLE.starter`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
-mv $MSTYLE.primer.sh ./backup/"$MSTYLE.primer`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
-mv $MSTYLE.kill.sh ./backup/"$MSTYLE.kill`date +%Y%m%d%H%M%S`.sh" > /dev/null 2>&1
+
 
 # Function calls
 $MSTYLE  $1
