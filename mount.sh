@@ -110,11 +110,11 @@ service_account_file = "$SA_PATH/$count.json"
 make_starter () {
   sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl enable $MSTYLE.@$name.service && sudo systemctl enable $MSTYLE.primer@$name.service">>$MSTYLE.starter.sh
+      echo "sudo systemctl enable $MSTYLE@$name.service && sudo systemctl enable $MSTYLE.primer@$name.service">>$MSTYLE.starter.sh
     done
     sed '/^\s*#.*$/d' $SET_DIR/$1|\
     while read -r name other;do
-      echo "sudo systemctl start $MSTYLE.@$name.service">>$MSTYLE.starter.sh
+      echo "sudo systemctl start $MSTYLE@$name.service">>$MSTYLE.starter.sh
     done
 }
 
@@ -158,9 +158,9 @@ sudo chmod -R 775 /home/$USER/smount/sharedrives
 # sudo systemctl enable $MSTYLE.primer@.timer
 
 # rename existing starter and kill scripts if present
-mv $MSTYLE.starter.sh "$MSTYLE.starter`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
-mv $MSTYLE.primer.sh "$MSTYLE.primer`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
-mv $MSTYLE.kill.sh "$MSTYLE.kill`date +%Y%m%d%H%M%S`.sh" > /dev/null 2>&1
+mv $MSTYLE.starter.sh ./backup/"$MSTYLE.starter`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
+mv $MSTYLE.primer.sh ./backup/"$MSTYLE.primer`date +%Y%m%d%H%M%S`".sh > /dev/null 2>&1
+mv $MSTYLE.kill.sh ./backup/"$MSTYLE.kill`date +%Y%m%d%H%M%S`.sh" > /dev/null 2>&1
 
 # Function calls
 $MSTYLE  $1
