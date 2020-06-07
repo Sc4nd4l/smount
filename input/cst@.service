@@ -22,7 +22,7 @@ EnvironmentFile=/home/$user/smount/sharedrives/%i.conf
 ExecStartPre=-/usr/bin/sudo /bin/mkdir -p $DESTINATION_DIR
 ExecStartPre=-/usr/bin/sudo /bin/chmod -R 775 $DESTINATION_DIR
 ExecStartPre=-/usr/bin/sudo /bin/chown -R $user:$group $DESTINATION_DIR
-ExecStart=/opt/crop/rclone_gclone mount \
+ExecStart=/usr/bin/rclone mount \
   --config=/home/$user/smount/smount.conf \
   --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36' \
   --allow-other \
@@ -30,7 +30,7 @@ ExecStart=/opt/crop/rclone_gclone mount \
   --fast-list \
   --rc \
   --rc-no-auth \
-  --use-mmap \ 
+  --use-mmap \
   --rc-addr=localhost:${RCLONE_RC_PORT} \
   --drive-service-account-file-path=$SA_PATH \
   --dir-cache-time=168h \

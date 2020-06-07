@@ -30,8 +30,9 @@ ExecStart=/opt/crop/rclone_gclone mount \
   --fast-list \
   --rc \
   --rc-no-auth \
-  --use-mmap \ 
+  --use-mmap \
   --rc-addr=localhost:${RCLONE_RC_PORT} \
+  --drive-service-account-file-path=${SA_PATH} \
   --dir-cache-time=168h \
   --timeout=10m \
   --umask=002 \
