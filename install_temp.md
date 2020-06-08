@@ -1,10 +1,13 @@
 Temporary install instructions....
 
 `cd ~/`
+
 Clone repo, shmount branch
+
 ```
 git clone https://github.com/maximuskowalski/smount.git --branch shmount && cd smount
 ```
+
 Use `mount.sh` for this version. Make executable, set variables.
 
 ```
