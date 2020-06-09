@@ -23,7 +23,7 @@ Group=$group
 Type=oneshot
 ExecStartPre=/bin/sleep 10
 ExecStart=/usr/bin/rclone \
-  --config /home/$user/.config/rclone/rclone.conf \
+  --config /root/.config/rclone/rclone.conf \
   --timeout=1h \
   -vvv \
   --rc-addr=localhost:${RCLONE_RC_PORT} \
